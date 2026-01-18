@@ -1,0 +1,195 @@
+@model AspCoreFirstApp.Models.Movie
+
+@{
+    ViewData["Title"] = "Créer un Film";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-danger text-white py-4">
+                    <h3 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-plus-circle-fill me-3 fs-2"></i>
+                        <span>@ViewData["Title"]</span>
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+                            <div>
+                                <strong>Erreur !</strong> Veuillez corriger les erreurs ci-dessous.
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form method="post" novalidate class="needs-validation">
+                        <div class="mb-4">
+                            <label for="Name" class="form-label fw-semibold">
+                                <i class="bi bi-film me-1 text-danger"></i>Titre du Film 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg @(ViewData.ModelState.ContainsKey("Name") && ViewData.ModelState["Name"]?.Errors.Count > 0 ? "is-invalid" : "")" 
+                                   id="Name" 
+                                   name="Name" 
+                                   placeholder="Ex: Inception, Titanic, The Matrix..."
+                                   value="@Model?.Name" 
+                                   required>
+                            @if (ViewData.ModelState.ContainsKey("Name") && ViewData.ModelState["Name"].Errors.Count > 0)
+                            {
+                                <div class="invalid-feedback d-block">
+                                    <i class="bi bi-x-circle me-1"></i>
+                                    @ViewData.ModelState["Name"].Errors[0].ErrorMessage
+                                </div>
+                            }
+                            <div class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Entrez le titre exact du film tel qu'il apparaît officiellement.
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="GenreId" class="form-label fw-semibold">
+                                <i class="bi bi-tags me-1 text-primary"></i>Genre du Film
+                                <span class="badge bg-secondary ms-2">Optionnel</span>
+                            </label>
+                            <select asp-for="GenreId" 
+                                    class="form-select form-select-lg"
+                                    asp-items='@(new Microsoft.AspNetCore.Mvc.Rendering.SelectList((IEnumerable<AspCoreFirstApp.Models.Genre>)ViewBag.Genres, "Id", "Name", Model?.GenreId))'>
+                                <option value="">-- Sélectionnez un genre --</option>
+                            </select>
+                            <div class="form-text">
+                                <i class="bi bi-lightbulb me-1"></i>
+                                Choisissez une catégorie pour faciliter la classification de votre film.
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info d-flex align-items-start mb-4" role="alert">
+                            <i class="bi bi-info-circle-fill fs-5 me-3 mt-1"></i>
+                            <div>
+                                <strong>À savoir :</strong> Vous pourrez ajouter plus de détails (affiche, description, etc.) après la création du film.
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end pt-3 border-top">
+                            <a href="@Url.Action("Index", "Movie")" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-1"></i>Annuler
+                            </a>
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-check-circle-fill me-1"></i>Créer le Film
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tips Section -->
+            <div class="card mt-4 border-0 shadow-sm">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightbulb-fill text-warning me-2"></i>Conseils de Saisie
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Titre du film</h6>
+                                    <p class="text-muted small mb-0">Utilisez le titre officiel complet pour une meilleure organisation</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Genre</h6>
+                                    <p class="text-muted small mb-0">Aide à filtrer et catégoriser votre collection</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Modification</h6>
+                                    <p class="text-muted small mb-0">Toutes les informations peuvent être modifiées ultérieurement</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Nouveau genre</h6>
+                                    <p class="text-muted small mb-0">Vous pouvez créer de nouveaux genres dans la section dédiée</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-danger {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-bottom: none;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #f5576c;
+        box-shadow: 0 0 0 0.25rem rgba(245, 87, 108, 0.25);
+    }
+
+    .form-label {
+        color: #333;
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Validation côté client Bootstrap
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                var forms = document.querySelectorAll('.needs-validation');
+                Array.prototype.slice.call(forms).forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            });
+        })();
+    </script>
+}

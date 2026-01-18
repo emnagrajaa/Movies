@@ -1,0 +1,182 @@
+@model AspCoreFirstApp.Models.Movie
+
+@{
+    ViewData["Title"] = "Supprimer un Film";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-gradient-danger text-white py-4">
+                    <h3 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill me-3 fs-2"></i>
+                        <span>@ViewData["Title"]</span>
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                        <i class="bi bi-exclamation-octagon-fill fs-4 me-3"></i>
+                        <div>
+                            <strong>Attention !</strong> Cette action est irréversible et ne peut pas être annulée.
+                        </div>
+                    </div>
+
+                    <div class="card bg-light border-0 mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-3">
+                                <i class="bi bi-film me-2 text-danger"></i>Film à supprimer
+                            </h5>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="movie-icon-large me-3">
+                                    <i class="bi bi-camera-reels-fill text-danger"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-1">@Model.Name</h4>
+                                    <small class="text-muted">ID: @Model.Id</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-white rounded shadow-sm">
+                                        <small class="text-muted d-block mb-1">
+                                            <i class="bi bi-hash me-1"></i>Identifiant
+                                        </small>
+                                        <h5 class="mb-0 fw-bold">
+                                            <span class="badge bg-primary fs-6">@Model.Id</span>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-white rounded shadow-sm">
+                                        <small class="text-muted d-block mb-1">
+                                            <i class="bi bi-collection me-1"></i>Genre
+                                        </small>
+                                        <h5 class="mb-0">
+                                            @if (Model.Genre != null)
+                                            {
+                                                <span class="badge bg-success fs-6">
+                                                    <i class="bi bi-tag me-1"></i>@Model.Genre.Name
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary fs-6">
+                                                    <i class="bi bi-dash-circle me-1"></i>Aucun genre
+                                                </span>
+                                            }
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-light p-3 rounded mb-4">
+                        <p class="mb-0 text-center">
+                            <i class="bi bi-question-circle me-2"></i>
+                            <strong>Êtes-vous absolument sûr de vouloir supprimer ce film ?</strong>
+                        </p>
+                    </div>
+
+                    <form method="post" asp-action="Delete" asp-controller="Movie">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <div class="d-flex gap-2 justify-content-end pt-3 border-top">
+                            <a asp-action="Index" asp-controller="Movie" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-arrow-left me-1"></i>Annuler
+                            </a>
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-trash-fill me-1"></i>Supprimer définitivement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Details Panel -->
+            <div class="card mt-4 border-0 shadow-sm">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clipboard-data me-2"></i>Détails complets du Film
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">
+                            <i class="bi bi-hash me-1"></i>Identifiant
+                        </dt>
+                        <dd class="col-sm-8 fw-semibold">@Model.Id</dd>
+                        
+                        <dt class="col-sm-4 text-muted">
+                            <i class="bi bi-film me-1"></i>Titre du film
+                        </dt>
+                        <dd class="col-sm-8 fw-semibold">@Model.Name</dd>
+                        
+                        <dt class="col-sm-4 text-muted">
+                            <i class="bi bi-collection me-1"></i>Genre associé
+                        </dt>
+                        <dd class="col-sm-8 mb-0">
+                            @if (Model.Genre != null)
+                            {
+                                <span class="badge bg-success">@Model.Genre.Name</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Aucun genre</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Warning Info -->
+            <div class="alert alert-warning mt-4 d-flex align-items-start" role="alert">
+                <i class="bi bi-info-circle-fill fs-5 me-3 mt-1"></i>
+                <div>
+                    <strong>Information :</strong> La suppression de ce film n'affectera pas le genre associé. Seul le film sera supprimé de la base de données.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-danger {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-bottom: none;
+    }
+
+    .movie-icon-large {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(220, 53, 69, 0.1);
+        border-radius: 12px;
+        font-size: 2rem;
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+</style>

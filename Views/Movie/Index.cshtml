@@ -1,0 +1,294 @@
+@model AspCoreFirstApp.ViewModels.PaginatedListViewModel<AspCoreFirstApp.Models.Movie>
+
+@{
+    ViewData["Title"] = "Liste des Films";
+    ViewBag.SortBy = Model.SortBy;
+    ViewBag.SortOrder = Model.SortOrder;
+}
+
+<div class="container mt-4">
+    <!-- Header Section -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-gradient-danger text-white d-flex justify-content-between align-items-center py-3">
+            <h4 class="mb-0">
+                <i class="bi bi-camera-reels-fill me-2"></i>@ViewData["Title"]
+            </h4>
+            <a href="@Url.Action("Create", "Movie")" class="btn btn-light btn-sm">
+                <i class="bi bi-plus-circle me-1"></i>Nouveau film
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <form method="get" class="d-flex">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" 
+                                   name="search" 
+                                   value="@Context.Request.Query["search"]" 
+                                   class="form-control" 
+                                   placeholder="Rechercher par nom ou genre..." 
+                                   aria-label="Rechercher des films">
+                            <button type="submit" class="btn btn-primary">
+                                Rechercher
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                    @if (Model.Genres != null && Model.Genres.Any())
+                    {
+                        <select class="form-select" 
+                                onchange="location.href='@Url.Action("Index", "Movie")' + '?genre=' + this.value + '&search=@Context.Request.Query["search"]';">
+                            <option value="">🎬 Tous les genres</option>
+                            @foreach (var genre in Model.Genres)
+                            {
+                                <option value="@genre.Id" selected="@(Context.Request.Query["genre"] == genre.Id.ToString())">
+                                    @genre.Name
+                                </option>
+                            }
+                        </select>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Items.Any())
+    {
+        <!-- Movies Grid/Table -->
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="px-4 py-3" style="width: 180px;">
+                                    <i class="bi bi-image me-1"></i>Affiche
+                                </th>
+                                <th class="px-4 py-3" style="width: 35%;">
+                                    <a href="@Url.Action("Index", "Movie", new { sortBy = "Name", sortOrder = Model.SortOrder == "asc" && Model.SortBy == "Name" ? "desc" : "asc", search = Context.Request.Query["search"], genre = Context.Request.Query["genre"] })" 
+                                       class="text-decoration-none text-dark fw-semibold">
+                                        <i class="bi bi-film me-1"></i>Titre
+                                        @if (Model.SortBy == "Name")
+                                        {
+                                            <i class="bi @(Model.SortOrder == "asc" ? "bi-sort-alpha-down" : "bi-sort-alpha-up") ms-1 text-danger"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-arrow-down-up ms-1 text-muted opacity-50"></i>
+                                        }
+                                    </a>
+                                </th>
+                                <th class="px-4 py-3" style="width: 20%;">
+                                    <i class="bi bi-tags me-1"></i>Genre
+                                </th>
+                                <th class="px-4 py-3 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var movie in Model.Items)
+                            {
+                                <tr class="align-middle">
+                                    <td class="px-4 py-3">
+                                        <div class="movie-poster-wrapper">
+                                            <img src="@Url.Content("~/images/" + movie.ImageFile)" 
+                                                 alt="@movie.Name"
+                                                 class="movie-poster" 
+                                                 onerror="this.src='@Url.Content("~/images/no-image.jpg")'">
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="d-flex align-items-center">
+                                            <div>
+                                                <h6 class="mb-0 fw-bold">@movie.Name</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        @if (movie.Genre != null)
+                                        {
+                                            <span class="badge bg-primary fs-6">
+                                                <i class="bi bi-tag-fill me-1"></i>@movie.Genre.Name
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary fs-6">Non défini</span>
+                                        }
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        <div class="btn-group" role="group">
+                                            <a href="@Url.Action("Details", "Movie", new { id = movie.Id })" 
+                                               class="btn btn-sm btn-outline-info" 
+                                               title="Voir les détails">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="@Url.Action("Edit", "Movie", new { id = movie.Id })" 
+                                               class="btn btn-sm btn-outline-warning" 
+                                               title="Modifier">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <a href="@Url.Action("Delete", "Movie", new { id = movie.Id })" 
+                                               class="btn btn-sm btn-outline-danger" 
+                                               title="Supprimer">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="card-footer bg-light border-top">
+                @await Html.PartialAsync("_Pagination", Model.Pagination)
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row g-3 mt-3">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-film text-danger fs-1 mb-2"></i>
+                        <h3 class="fw-bold mb-0">@Model.Items.Count()</h3>
+                        <small class="text-muted">Film@(Model.Items.Count() > 1 ? "s" : "") affiché@(Model.Items.Count() > 1 ? "s" : "")</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-tags text-primary fs-1 mb-2"></i>
+                        <h3 class="fw-bold mb-0">@(Model.Genres?.Count() ?? 0)</h3>
+                        <small class="text-muted">Genre@((Model.Genres?.Count() ?? 0) > 1 ? "s" : "") disponible@((Model.Genres?.Count() ?? 0) > 1 ? "s" : "")</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-collection text-success fs-1 mb-2"></i>
+                        <h3 class="fw-bold mb-0">@Model.Items.Count(m => m.Genre != null)</h3>
+                        <small class="text-muted">Film@(Model.Items.Count(m => m.Genre != null) > 1 ? "s" : "") catégorisé@(Model.Items.Count(m => m.Genre != null) > 1 ? "s" : "")</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+                <h5 class="text-muted">Aucun film disponible</h5>
+                <p class="text-muted mb-4">
+                    @if (!string.IsNullOrEmpty(Context.Request.Query["search"]) || !string.IsNullOrEmpty(Context.Request.Query["genre"]))
+                    {
+                        <span>Aucun film ne correspond à vos critères de recherche.</span>
+                        <br />
+                        <a href="@Url.Action("Index", "Movie")" class="btn btn-outline-secondary btn-sm mt-2">
+                            <i class="bi bi-x-circle me-1"></i>Effacer les filtres
+                        </a>
+                    }
+                    else
+                    {
+                        <span>Commencez par ajouter votre premier film</span>
+                    }
+                </p>
+                <a href="@Url.Action("Create", "Movie")" class="btn btn-danger">
+                    <i class="bi bi-plus-circle me-1"></i>Ajouter un film
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .bg-gradient-danger {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .movie-poster-wrapper {
+        width: 120px;
+        height: 180px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease;
+    }
+
+    .movie-poster-wrapper:hover {
+        transform: scale(1.05);
+    }
+
+    .movie-poster {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .table-hover tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(245, 87, 108, 0.05);
+        transform: scale(1.01);
+    }
+
+    .btn-group .btn {
+        border-radius: 0;
+    }
+
+    .btn-group .btn:first-child {
+        border-top-left-radius: 0.25rem;
+        border-bottom-left-radius: 0.25rem;
+    }
+
+    .btn-group .btn:last-child {
+        border-top-right-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+    }
+
+    th a {
+        transition: color 0.2s ease;
+    }
+
+    th a:hover {
+        color: var(--bs-danger) !important;
+    }
+
+    .input-group-text {
+        border-right: 0;
+    }
+
+    .input-group .form-control {
+        border-left: 0;
+    }
+
+    .input-group .form-control:focus {
+        border-color: #ced4da;
+        box-shadow: none;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) { 
+            return new bootstrap.Tooltip(tooltipTriggerEl); 
+        });
+    });
+</script>
