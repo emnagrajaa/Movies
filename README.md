@@ -31,7 +31,7 @@ This project is a .NET-based **movie management web application**. It allows use
 - **SQL Database** (likely SQL Server via EF migrations)  
 - **Static assets** in `wwwroot/` for front-end resources  
 
-## Typical Project Setup
+## Project Setup
 
 1. **Clone the repo:**
    ```bash
@@ -46,6 +46,5 @@ This project is a .NET-based **movie management web application**. It allows use
    ```bash
    dotnet run
 
-   
 
 
